@@ -185,6 +185,7 @@ H5P.Essay = function ($, Question) {
         return;
       }
       if(typeof that.parent == "undefined") {
+        // submitted-curriki verb code
         that.triggerXAPIScored(that.getScore(), that.getMaxScore(), 'submitted-curriki');
       }
       
