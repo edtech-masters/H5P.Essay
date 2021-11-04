@@ -175,7 +175,7 @@ H5P.Essay = function ($, Question) {
     }, false, {}, {});
 
     // Check answer button
-    that.addButton('check-answer', "Submit Reuslt", function () {
+    that.addButton('check-answer', that.params.checkAnswer, function () {
       // Show message if the minimum number of characters has not been met
       if (that.inputField.getText().length < that.params.behaviour.minimumLength) {
         var message = that.params.notEnoughChars.replace(/@chars/g, that.params.behaviour.minimumLength);
