@@ -659,7 +659,7 @@ H5P.Essay = function ($, Question) {
     var max_score = this.getMaxScore();
 
     if(max_score === raw_score) {
-      max_score += 1;
+      //max_score += 1;
     }
     xAPIEvent.setScoredResult(raw_score, max_score, this, true, this.isPassed());
     xAPIEvent.data.statement.result.response = this.inputField.getText();
