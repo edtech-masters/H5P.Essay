@@ -9,8 +9,7 @@ H5P.Essay = function ($, Question) {
   var SOLUTION_INTRODUCTION = 'h5p-essay-solution-introduction';
   var SOLUTION_SAMPLE = 'h5p-essay-solution-sample';
   var SOLUTION_SAMPLE_TEXT = 'h5p-essay-solution-sample-text';
-  var STATE_SUBMITTED_SOLUTION = 'submitted-solution';
-
+  
   // The H5P feedback right now only expects true (green)/false (red) feedback, not neutral feedback
   var FEEDBACK_EMPTY= '<span class="h5p-essay-feedback-empty">...</span>';
 
@@ -41,14 +40,12 @@ H5P.Essay = function ($, Question) {
           minimumLength: 0,
           inputFieldSize: 10,
           enableRetry: true,
-          disableSubmitButton: false,
           ignoreScoring: false,
           pointsHost: 1
         },
         checkAnswer: 'Check',
         tryAgain: 'Retry',
         showSolution: 'Show solution',
-        submitAnswer: "Submit",
         viewSummary: "View Summary",
         feedbackHeader: 'Feedback',
         solutionTitle: 'Sample solution',
@@ -187,7 +184,9 @@ H5P.Essay = function ($, Question) {
     }, false, {}, {});
 
     // Show submit button
+    
     if (!that.params.currikisettings.disableSubmitButton && typeof that.parent == "undefined") {
+    
         that.addButton('submit-answer', that.params.currikisettings.currikil10n.submitAnswer,  function () {
           
           that.triggerXAPIScored(that.getScore(), that.getMaxScore(), 'completed');
@@ -202,17 +201,18 @@ H5P.Essay = function ($, Question) {
 
     // Check answer button
     that.addButton('check-answer', that.params.checkAnswer, function () {
+      console.log('202');
       // Show message if the minimum number of characters has not been met
       if (that.inputField.getText().length < that.params.behaviour.minimumLength) {
         var message = that.params.notEnoughChars.replace(/@chars/g, that.params.behaviour.minimumLength);
         that.inputField.setMessageChars(message, true);
         that.read(message);
-        
+        console.log('207');
         return;
       }
       
       
-
+      console.log('212');
       that.inputField.disable();
       /*
        * Only set true on "check". Result computation may take some time if
@@ -225,8 +225,8 @@ H5P.Essay = function ($, Question) {
       if (that.params.behaviour.enableSolutionsButton === true) {
         that.showButton('show-solution');
       }
-
-      if (that.params.behaviour.disableSubmitButton === false && typeof that.parent == "undefined") {
+      console.log('225');
+      if (that.params.currikisettings.disableSubmitButton === false && typeof that.parent == "undefined") {
           that.showButton('submit-answer');
       }
       that.hideButton('check-answer');
@@ -369,6 +369,7 @@ H5P.Essay = function ($, Question) {
     this.hideSolution();
 
     this.hideButton('show-solution');
+    this.hideButton('submit-answer');
     this.hideButton('try-again');
     this.showButton('check-answer');
 
@@ -380,14 +381,14 @@ H5P.Essay = function ($, Question) {
     // Reset activity start time for XAPI
     this.activityStartTime = Date.now();
   };
-  console.log('300');
+  
   /**
    * Get xAPI data.
    * @return {Object} xAPI statement.
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-6}
    */
   Essay.prototype.getXAPIData = function () {
-    console.log('307');
+    
     return {
       statement: this.getXAPIAnswerEvent().data.statement
     };
@@ -617,7 +618,7 @@ H5P.Essay = function ($, Question) {
     }
 
     // We need the retry button if the mastering score has not been reached or scoring is irrelevant
-    if (score < this.getMaxScore() || this.params.behaviour.ignoreScoring || state === STATE_SUBMITTED_SOLUTION) {
+    if (score < this.getMaxScore() || this.params.behaviour.ignoreScoring) {
       if (this.params.behaviour.enableRetry) {
         this.showButton('try-again');
       }
@@ -690,10 +691,7 @@ H5P.Essay = function ($, Question) {
 
     var raw_score = this.getScore();
     var max_score = this.getMaxScore();
-
-    if(max_score === raw_score) {
-      //max_score += 1;
-    }
+    
     xAPIEvent.setScoredResult(raw_score, max_score, this, true, this.isPassed());
     xAPIEvent.data.statement.result.response = this.inputField.getText();
 
